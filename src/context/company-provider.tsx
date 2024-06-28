@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { api } from '../lib/axios'
+import { getCompanies } from '../api/get-companies'
 
 interface Company {
   id: string
@@ -26,19 +26,7 @@ export function CompanyProvider({ children }: CompanyProviderProps) {
   const [companies, setCompanies] = useState<Company[]>([])
 
   useEffect(() => {
-    api.get<Company[]>('/companies').then((response) => {
-      const companiesSorted = response.data.sort((a, b) => {
-        const nameA = a.name.toLowerCase()
-        const nameB = b.name.toLowerCase()
-
-        if (nameA < nameB) return -1
-        if (nameA > nameB) return 1
-
-        return 0
-      })
-
-      setCompanies(companiesSorted)
-    })
+    getCompanies().then((response) => setCompanies(response))
   }, [])
 
   return (
