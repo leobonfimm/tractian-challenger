@@ -40,11 +40,7 @@ export function Dashboard() {
             Sensor de Energia
           </Button>
 
-          <Button
-            data-current={false}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
+          <Button variant="outline" className="flex items-center gap-2">
             <CircleAlert size={16} className="text-blue-500" />
             Crítico
           </Button>

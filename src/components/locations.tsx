@@ -2,8 +2,7 @@ import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { Location, getLocations } from '../api/get-locations'
-import { TreeAsset } from './tree-asset'
-import { TreeNode } from './tree-node'
+import { TreeLocation } from './tree-location'
 
 interface ActiveNavigationProps {
   companyId: string
@@ -32,18 +31,11 @@ export function Locations({ companyId }: ActiveNavigationProps) {
       <nav className="overflow-y-auto h-[calc(100vh-225px)] px-1 py-2">
         {locations.map((location) => (
           <div key={location.id} className="flex flex-col">
-            <TreeNode
+            <TreeLocation
               name={location.name}
               subLocations={location.subLocations}
               assets={location.assets}
             />
-            {location.assets.map((asset) => (
-              <TreeAsset
-                key={asset.id}
-                currentAsset={asset}
-                assets={asset.subAssets}
-              />
-            ))}
           </div>
         ))}
       </nav>

@@ -47,5 +47,33 @@ export function buildTreeLocation(
   // Construir a árvore de localizações
   locations.forEach(buildNode)
 
+  // Função para ordenar nós com filhos primeiro
+  function sortNodes(nodes: (Location | Asset)[]) {
+    nodes.sort((a, b) => {
+      const aHasChildren = 'subLocations' in a && a.subLocations!.length > 0
+      const bHasChildren = 'subLocations' in b && b.subLocations!.length > 0
+      const aHasAssets = 'assets' in a && a.assets!.length > 0
+      const bHasAssets = 'assets' in b && b.assets!.length > 0
+      return (
+        Number(bHasChildren || bHasAssets) - Number(aHasChildren || aHasAssets)
+      )
+    })
+
+    nodes.forEach((node) => {
+      if ('subLocations' in node && node.subLocations!.length > 0) {
+        sortNodes(node.subLocations!)
+      }
+      if ('assets' in node && node.assets!.length > 0) {
+        sortNodes(node.assets!)
+      }
+      if ('subLocations' in node && node.subLocations!.length > 0) {
+        sortNodes(node.subLocations!)
+      }
+    })
+  }
+
+  // Ordenar a árvore de localizações e ativos
+  sortNodes(roots)
+
   return roots
 }
