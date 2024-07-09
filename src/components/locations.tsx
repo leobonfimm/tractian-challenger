@@ -47,7 +47,7 @@ export function Locations({ companyId }: ActiveNavigationProps) {
   const filteredLocation = filterTree(locations, searchTitle)
 
   return (
-    <aside className="w-full max-w-[480px] rounded-md border border-[#D8DFE6]">
+    <aside className="w-full flex-1 max-w-[480px] rounded-md border border-[#D8DFE6]">
       <SearchFilterForm />
 
       <nav className="overflow-y-auto h-[calc(100vh-225px)] px-1 py-2">

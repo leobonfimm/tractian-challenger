@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Locations } from '../../components/locations'
 import { Button } from '../../components/ui/button'
 import { useCompany } from '../../context/company-provider'
+import { ComponentDetails } from './component-details'
 
 type ClientType = 'apex' | 'tobias' | 'jaguar'
 
@@ -14,7 +15,7 @@ const CLIENT_TITLE = {
 
 export function Dashboard() {
   const [searchParams] = useSearchParams()
-  const { companies } = useCompany()
+  const { companies, assetSelected } = useCompany()
   const companySelected =
     (searchParams.get('companySelected') as ClientType) ?? 'apex'
 
@@ -36,22 +37,32 @@ export function Dashboard() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="activate" className="flex items-center gap-2">
+          <Button
+            variant={
+              assetSelected.sensorType === 'energy' ? 'activate' : 'outline'
+            }
+            className="flex items-center gap-2"
+            disabled
+          >
             <Zap size={16} />
             Sensor de Energia
           </Button>
 
-          <Button variant="outline" className="flex items-center gap-2">
-            <CircleAlert size={16} className="text-blue-500" />
+          <Button
+            variant={assetSelected.status === 'alert' ? 'activate' : 'outline'}
+            className="flex items-center gap-2"
+            disabled
+          >
+            <CircleAlert size={16} />
             Crítico
           </Button>
         </div>
       </header>
 
-      <main className="flex items-start flex-1 gap-2">
+      <main className="flex items-stretch flex-1 gap-2 mt-3">
         <Locations companyId={companyId || ''} />
 
-        <h1 className="col-start-2">Infos do Ativo</h1>
+        <ComponentDetails />
       </main>
     </div>
   )

@@ -54,7 +54,10 @@ export function SearchFilterForm() {
         className="flex-1"
         {...register('query')}
       />
-      <Search size={14} />
+
+      <button type="submit" className="cursor-pointer text-[#2188FF]">
+        <Search size={14} />
+      </button>
     </form>
   )
 }

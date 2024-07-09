@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Asset } from '../api/get-locations'
 
 import { useSearchParams } from 'react-router-dom'
+import { useCompany } from '../context/company-provider'
 import { MenuButton } from './menu-button'
 import { MenuIconType } from './menu-icon-type'
 import { MenuItemSelected } from './menu-item-selected'
@@ -13,6 +14,7 @@ interface AssetProps {
 export function TreeAsset({ asset }: AssetProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [showMenu, setShowMenu] = useState(false)
+  const { onHandleAssetSelected } = useCompany()
 
   const { name, sensorType, status, subAssets } = asset
   const isAsset = sensorType === null
@@ -20,23 +22,19 @@ export function TreeAsset({ asset }: AssetProps) {
   const assetSelectedId = searchParams.get('assetSelectedId') ?? ''
   const colorSelected = asset.id === assetSelectedId ? '#FFFFFF' : '#2188FF'
 
-  useEffect(() => {
-    const searchTitle = searchParams.get('searchTitle') ?? ''
-
-    setShowMenu(!!searchTitle && asset.subAssets.length > 0)
-  }, [searchParams, asset.subAssets.length])
-
   function handleShowMenu() {
     setShowMenu(!showMenu)
   }
 
   function handleSetAssetIdParam(id: string) {
     setSearchParams((state) => {
-      if (id) state.set('assetSelectedId', id)
-      else state.delete('assetSelectedId')
+      state.set('assetSelectedId', id)
+      state.delete('locationSelectedId')
 
       return state
     })
+
+    onHandleAssetSelected(asset)
   }
 
   return (
@@ -47,11 +45,7 @@ export function TreeAsset({ asset }: AssetProps) {
           title={name}
           onOpenCloseMenu={handleShowMenu}
           menuIcon={
-            <MenuIconType
-              type={isAsset ? 'asset' : 'component'}
-              size={24}
-              color={colorSelected}
-            />
+            <MenuIconType type={isAsset ? 'asset' : 'component'} size={24} />
           }
         />
       ) : (

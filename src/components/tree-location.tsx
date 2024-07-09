@@ -27,6 +27,8 @@ export function TreeLocation({ location }: SubLocationProps) {
       if (id) state.set('locationSelectedId', id)
       else state.delete('locationSelectedId')
 
+      state.delete('assetSelectedId')
+
       return state
     })
   }

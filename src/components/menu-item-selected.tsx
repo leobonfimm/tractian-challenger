@@ -30,12 +30,13 @@ export function MenuItemSelected({
     >
       <MenuIconType type={type} size={size} color={color} />
       <span>{title}</span>
-      {sensorType === 'energy' ? (
+      {sensorType === 'energy' && (
         <Zap
           data-alert={status === 'alert'}
           className="text-green-400 data-[alert=true]:text-red-500 w-4 h-4"
         />
-      ) : (
+      )}
+      {sensorType === 'vibration' && (
         <div
           data-alert={status === 'alert'}
           className="flex bg-green-400 data-[alert=true]:bg-red-500 w-2 h-2 rounded-full"
