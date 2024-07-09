@@ -1,77 +1,71 @@
-import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
-import { Asset, Location } from '../api/get-locations'
+import { useSearchParams } from 'react-router-dom'
+import { Location } from '../api/get-locations'
+import { MenuButton } from './menu-button'
+import { MenuIconType } from './menu-icon-type'
+import { MenuItemSelected } from './menu-item-selected'
 import { TreeAsset } from './tree-asset'
 
-import locationIcon from '../assets/location.png'
-
 interface SubLocationProps {
-  name: string
-  subLocations: Location[]
-  assets: Asset[]
+  location: Location
 }
 
-export function TreeLocation({ name, subLocations, assets }: SubLocationProps) {
+export function TreeLocation({ location }: SubLocationProps) {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [showMenu, setShowMenu] = useState(false)
-  const [showMenuAssets, setShowMenuAssets] = useState(false)
+  const { id, name, subLocations, assets } = location
+
+  const locationSelectedId = searchParams.get('locationSelectedId') ?? ''
+  const colorSelected = id === locationSelectedId ? '#FFFFFF' : '#2188FF'
+
+  function handleShowMenuLocation() {
+    setShowMenu(!showMenu)
+  }
+
+  function handleSetLocationIdParam(id: string) {
+    setSearchParams((state) => {
+      if (id) state.set('locationSelectedId', id)
+      else state.delete('locationSelectedId')
+
+      return state
+    })
+  }
 
   return (
     <div className="mt-1">
-      {subLocations.length !== 0 ? (
-        <button
-          className="flex items-center gap-1 disabled:ml-4"
-          onClick={() => setShowMenu(!showMenu)}
-        >
-          {subLocations.length !== 0 && (
-            <>
-              {showMenu ? (
-                <ChevronDown size={24} />
-              ) : (
-                <ChevronRight size={24} />
-              )}
-            </>
-          )}
-          <img src={locationIcon} alt="" className="w-6 h-6" />
-          <span>{name}</span>
-        </button>
+      {subLocations.length > 0 || assets.length > 0 ? (
+        <MenuButton
+          isMenuOpen={showMenu}
+          title={name}
+          onOpenCloseMenu={handleShowMenuLocation}
+          menuIcon={<MenuIconType type="location" size={24} />}
+        />
       ) : (
-        <button
-          className="flex items-center gap-1 disabled:ml-4"
-          onClick={() => setShowMenuAssets(!showMenuAssets)}
-        >
-          {assets.length !== 0 && (
-            <>
-              {showMenuAssets ? (
-                <ChevronDown size={24} />
-              ) : (
-                <ChevronRight size={24} />
-              )}
-            </>
-          )}
-          <img src={locationIcon} alt="" className="w-6 h-6" />
-          <span>{name}</span>
-        </button>
+        <MenuItemSelected
+          title={name}
+          isSelected={id === locationSelectedId}
+          type="location"
+          size={24}
+          color={colorSelected}
+          handleSetAssetIdParam={() => handleSetLocationIdParam(id)}
+        />
       )}
 
-      {showMenu && subLocations.length > 0 && (
+      {showMenu && (
         <div className="ml-4">
           {subLocations.map((subLocation) => (
             <div key={subLocation.id} className="flex flex-col">
-              <TreeLocation
-                name={subLocation.name}
-                subLocations={subLocation.subLocations}
-                assets={subLocation.assets}
-              />
+              <TreeLocation location={subLocation} />
             </div>
           ))}
         </div>
       )}
 
-      {showMenuAssets && assets.length > 0 && (
+      {showMenu && (
         <div className="ml-4">
           {assets.map((asset) => (
             <div key={asset.id} className="flex flex-col">
-              <TreeAsset currentAsset={asset} assets={asset.subAssets} />
+              <TreeAsset asset={asset} />
             </div>
           ))}
         </div>

@@ -5,9 +5,9 @@ export interface Asset {
   id: string
   name: string
   parentId: string | null
-  sensorType: string
+  sensorType: 'energy' | 'vibration' | null
   sensorId: string
-  status: string
+  status: 'alert' | 'operating' | null
   gatewayId: string
   locationId: string
   subAssets: Asset[]

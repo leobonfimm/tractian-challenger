@@ -17,6 +17,7 @@ export function Dashboard() {
   const { companies } = useCompany()
   const companySelected =
     (searchParams.get('companySelected') as ClientType) ?? 'apex'
+
   const companyId = companies.find(
     (company) => company.name.toLowerCase() === companySelected,
   )?.id

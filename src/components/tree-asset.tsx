@@ -1,24 +1,36 @@
-import { ChevronDown, ChevronRight } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Asset } from '../api/get-locations'
 
 import { useSearchParams } from 'react-router-dom'
-import assetIcon from '../assets/asset.png'
-import componentIcon from '../assets/component.png'
+import { MenuButton } from './menu-button'
+import { MenuIconType } from './menu-icon-type'
+import { MenuItemSelected } from './menu-item-selected'
 
 interface AssetProps {
-  currentAsset: Asset
-  assets: Asset[]
+  asset: Asset
 }
 
-export function TreeAsset({ assets, currentAsset }: AssetProps) {
-  const [, setSearchParams] = useSearchParams()
+export function TreeAsset({ asset }: AssetProps) {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [showMenu, setShowMenu] = useState(false)
-  const [assetSelected, setAssetSelected] = useState(false)
-  const { name, sensorType } = currentAsset
+
+  const { name, sensorType, status, subAssets } = asset
+  const isAsset = sensorType === null
+
+  const assetSelectedId = searchParams.get('assetSelectedId') ?? ''
+  const colorSelected = asset.id === assetSelectedId ? '#FFFFFF' : '#2188FF'
+
+  useEffect(() => {
+    const searchTitle = searchParams.get('searchTitle') ?? ''
+
+    setShowMenu(!!searchTitle && asset.subAssets.length > 0)
+  }, [searchParams, asset.subAssets.length])
+
+  function handleShowMenu() {
+    setShowMenu(!showMenu)
+  }
 
   function handleSetAssetIdParam(id: string) {
-    setAssetSelected(true)
     setSearchParams((state) => {
       if (id) state.set('assetSelectedId', id)
       else state.delete('assetSelectedId')
@@ -29,50 +41,36 @@ export function TreeAsset({ assets, currentAsset }: AssetProps) {
 
   return (
     <div className="mt-1">
-      {assets.length > 0 ? (
-        <button
-          className="flex items-center gap-1 disabled:ml-8"
-          onClick={() => setShowMenu(!showMenu)}
-        >
-          {assets.length !== 0 && (
-            <>
-              {showMenu ? (
-                <ChevronDown size={24} />
-              ) : (
-                <ChevronRight size={24} />
-              )}
-            </>
-          )}
-          {sensorType ? (
-            <img src={componentIcon} alt="" className="w-6 h-6" />
-          ) : (
-            <img src={assetIcon} alt="" className="w-6 h-6" />
-          )}
-          <span>{name}</span>
-        </button>
+      {subAssets.length > 0 ? (
+        <MenuButton
+          isMenuOpen={showMenu}
+          title={name}
+          onOpenCloseMenu={handleShowMenu}
+          menuIcon={
+            <MenuIconType
+              type={isAsset ? 'asset' : 'component'}
+              size={24}
+              color={colorSelected}
+            />
+          }
+        />
       ) : (
-        <button
-          data-current={assetSelected}
-          className="flex items-center gap-1 ml-8 data-[current=true]:bg-[#2188FF] data-[current=true]:text-white"
-          onClick={() => handleSetAssetIdParam(currentAsset.id)}
-        >
-          {sensorType ? (
-            <img src={componentIcon} alt="" className="w-6 h-6" />
-          ) : (
-            <img src={assetIcon} alt="" className="w-6 h-6" />
-          )}
-          <span>{name}</span>
-        </button>
+        <MenuItemSelected
+          title={name}
+          isSelected={asset.id === assetSelectedId}
+          type={isAsset ? 'asset' : 'component'}
+          color={colorSelected}
+          size={24}
+          sensorType={sensorType}
+          status={status}
+          handleSetAssetIdParam={() => handleSetAssetIdParam(asset.id)}
+        />
       )}
 
-      {showMenu && assets.length > 0 && (
+      {showMenu && subAssets.length > 0 && (
         <div className="ml-4">
-          {assets.map((asset) => (
-            <TreeAsset
-              key={asset.id}
-              currentAsset={asset}
-              assets={asset.subAssets}
-            />
+          {subAssets.map((asset) => (
+            <TreeAsset key={asset.id} asset={asset} />
           ))}
         </div>
       )}
