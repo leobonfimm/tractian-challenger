@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Locations } from '../../components/locations'
 import { Button } from '../../components/ui/button'
 import { useCompany } from '../../context/company-provider'
-import { ComponentDetails } from './component-details'
+import { ComponentDetails } from './component'
 
 type ClientType = 'apex' | 'tobias' | 'jaguar'
 

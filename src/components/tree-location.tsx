@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Location } from '../api/get-locations'
+import { useCompany } from '../context/company-provider'
 import { MenuButton } from './menu-button'
 import { MenuIconType } from './menu-icon-type'
 import { MenuItemSelected } from './menu-item-selected'
@@ -11,12 +12,13 @@ interface SubLocationProps {
 }
 
 export function TreeLocation({ location }: SubLocationProps) {
+  const { onHandleAssetSelected } = useCompany()
   const [searchParams, setSearchParams] = useSearchParams()
   const [showMenu, setShowMenu] = useState(false)
   const { id, name, subLocations, assets } = location
 
-  const locationSelectedId = searchParams.get('locationSelectedId') ?? ''
-  const colorSelected = id === locationSelectedId ? '#FFFFFF' : '#2188FF'
+  const assetSelectedId = searchParams.get('assetSelectedId') ?? ''
+  const colorSelected = id === assetSelectedId ? '#FFFFFF' : '#2188FF'
 
   function handleShowMenuLocation() {
     setShowMenu(!showMenu)
@@ -24,13 +26,13 @@ export function TreeLocation({ location }: SubLocationProps) {
 
   function handleSetLocationIdParam(id: string) {
     setSearchParams((state) => {
-      if (id) state.set('locationSelectedId', id)
-      else state.delete('locationSelectedId')
-
-      state.delete('assetSelectedId')
+      if (id) state.set('assetSelectedId', id)
+      else state.delete('assetSelectedId')
 
       return state
     })
+
+    onHandleAssetSelected(location)
   }
 
   return (
@@ -45,7 +47,7 @@ export function TreeLocation({ location }: SubLocationProps) {
       ) : (
         <MenuItemSelected
           title={name}
-          isSelected={id === locationSelectedId}
+          isSelected={id === assetSelectedId}
           type="location"
           size={24}
           color={colorSelected}

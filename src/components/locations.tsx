@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useSearchParams } from 'react-router-dom'
 import { Location, getLocations } from '../api/get-locations'
@@ -44,7 +44,9 @@ export function Locations({ companyId }: ActiveNavigationProps) {
     return locations.filter((location) => search(location))
   }
 
-  const filteredLocation = filterTree(locations, searchTitle)
+  const filteredLocation = useMemo(() => {
+    return filterTree(locations, searchTitle)
+  }, [locations, searchTitle])
 
   return (
     <aside className="w-full flex-1 max-w-[480px] rounded-md border border-[#D8DFE6]">

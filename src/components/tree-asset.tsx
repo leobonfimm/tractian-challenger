@@ -29,7 +29,6 @@ export function TreeAsset({ asset }: AssetProps) {
   function handleSetAssetIdParam(id: string) {
     setSearchParams((state) => {
       state.set('assetSelectedId', id)
-      state.delete('locationSelectedId')
 
       return state
     })

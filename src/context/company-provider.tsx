@@ -6,7 +6,15 @@ import {
   useState,
 } from 'react'
 import { getCompanies } from '../api/get-companies'
-import { Asset } from '../api/get-locations'
+
+interface AssetSelected {
+  id: string
+  name: string
+  sensorType?: 'energy' | 'vibration' | null
+  sensorId?: string
+  status?: 'alert' | 'operating' | null
+  gatewayId?: string
+}
 
 interface Company {
   id: string
@@ -15,8 +23,8 @@ interface Company {
 
 interface CompanyContextType {
   companies: Company[]
-  assetSelected: Asset
-  onHandleAssetSelected: (asset: Asset) => void
+  assetSelected: AssetSelected
+  onHandleAssetSelected: (asset: AssetSelected) => void
 }
 
 export const CompanyContext = createContext({} as CompanyContextType)
@@ -27,13 +35,15 @@ interface CompanyProviderProps {
 
 export function CompanyProvider({ children }: CompanyProviderProps) {
   const [companies, setCompanies] = useState<Company[]>([])
-  const [assetSelected, setAssetSelected] = useState<Asset>({} as Asset)
+  const [assetSelected, setAssetSelected] = useState<AssetSelected>(
+    {} as AssetSelected,
+  )
 
   useEffect(() => {
     getCompanies().then((response) => setCompanies(response))
   }, [])
 
-  function onHandleAssetSelected(asset: Asset) {
+  function onHandleAssetSelected(asset: AssetSelected) {
     setAssetSelected(asset)
   }
 

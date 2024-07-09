@@ -1,12 +1,13 @@
 import { Zap } from 'lucide-react'
+import { ComponentAbout } from '../../components/component-about'
 import { useCompany } from '../../context/company-provider'
 
 export function ComponentDetails() {
   const { assetSelected } = useCompany()
 
   return (
-    <div className="flex flex-1 flex-col rounded-md border border-[#D8DFE6] ">
-      <div className="flex items-center gap-2 border-b border-[#D8DFE6] px-4 py-[14px]">
+    <div className="flex flex-1 flex-col rounded-md border border-[#D8DFE6]">
+      <header className="flex items-center gap-2 border-b border-[#D8DFE6] px-4 py-[14px]">
         <h1 className="font-semibold leading-5 text-xl">
           {assetSelected.name}
         </h1>
@@ -22,7 +23,9 @@ export function ComponentDetails() {
             className="flex bg-green-400 data-[alert=true]:bg-red-500 w-2 h-2 rounded-full"
           />
         )}
-      </div>
+      </header>
+
+      <ComponentAbout />
     </div>
   )
 }
