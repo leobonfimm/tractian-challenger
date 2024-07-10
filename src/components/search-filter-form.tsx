@@ -1,63 +1,75 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Search } from 'lucide-react'
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { useSearchParams } from 'react-router-dom'
-import { z } from 'zod'
+import { Search, Zap } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-const searchFilterFormSchema = z.object({
-  query: z.string().optional(),
-})
+export interface SearchFilterFormSchema {
+  title: string
+  sensorType?: string
+  status?: string
+}
 
-type SearchFilterFormSchema = z.infer<typeof searchFilterFormSchema>
+interface SearchFilterFormProps {
+  onSearchFilter: (query: string) => void
+  onSensorTypeFilter: (type: string) => void
+  onStatusFilter: (status: string) => void
+}
 
-export function SearchFilterForm() {
-  const [, setSearchParams] = useSearchParams()
-  const { register, watch, handleSubmit } = useForm<SearchFilterFormSchema>({
-    resolver: zodResolver(searchFilterFormSchema),
-  })
-
-  const watchTitleField = watch('query')
+export function SearchFilterForm({
+  onSearchFilter,
+  onSensorTypeFilter,
+  onStatusFilter,
+}: SearchFilterFormProps) {
+  const [query, setQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState<string>(query)
 
   useEffect(() => {
-    setSearchParams((state) => {
-      if (watchTitleField) {
-        state.set('searchTitle', watchTitleField)
-      } else {
-        state.delete('searchTitle')
-      }
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query)
+    }, 500)
 
-      return state
-    })
-  }, [setSearchParams, watchTitleField])
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [query])
 
-  function handleSearchParams(data: SearchFilterFormSchema) {
-    setSearchParams((state) => {
-      if (data.query) {
-        state.set('searchTitle', data.query)
-      } else {
-        state.delete('searchTitle')
-      }
+  useEffect(() => {
+    onSearchFilter(debouncedQuery)
+  }, [debouncedQuery, onSearchFilter])
 
-      return state
-    })
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setQuery(value)
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(handleSearchParams)}
-      className="border-b border-[#D8DFE6] flex items-center w-full p-3"
-    >
+    <div className="border-b border-[#D8DFE6] flex items-center w-full p-3">
       <input
         type="text"
         placeholder="Buscar Ativo ou Local"
         className="flex-1"
-        {...register('query')}
+        onChange={handleSearch}
       />
 
-      <button type="submit" className="cursor-pointer text-[#2188FF]">
-        <Search size={14} />
-      </button>
-    </form>
+      <div className="flex gap-2 ml-2">
+        <button type="button" className="cursor-pointer text-[#2188FF]">
+          <Search size={14} />
+        </button>
+
+        <button
+          type="button"
+          className="cursor-pointer text-[#2188FF]"
+          onClick={() => onSensorTypeFilter('energy')}
+        >
+          <Zap size={14} />
+        </button>
+
+        <button
+          type="button"
+          className="cursor-pointer"
+          onClick={() => onStatusFilter('alert')}
+        >
+          <div className="flex bg-red-500 w-3 h-3 rounded-full" />
+        </button>
+      </div>
+    </div>
   )
 }

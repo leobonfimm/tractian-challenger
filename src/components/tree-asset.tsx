@@ -1,7 +1,6 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Asset } from '../api/get-locations'
 
-import { useSearchParams } from 'react-router-dom'
 import { useCompany } from '../context/company-provider'
 import { MenuButton } from './menu-button'
 import { MenuIconType } from './menu-icon-type'
@@ -9,32 +8,44 @@ import { MenuItemSelected } from './menu-item-selected'
 
 interface AssetProps {
   asset: Asset
+  isAlreadyOpen: boolean
 }
 
-export function TreeAsset({ asset }: AssetProps) {
-  const [searchParams, setSearchParams] = useSearchParams()
+export function TreeAsset({ asset, isAlreadyOpen }: AssetProps) {
   const [showMenu, setShowMenu] = useState(false)
-  const { onHandleAssetSelected } = useCompany()
+  const { onHandleAssetSelected, assetSelected } = useCompany()
 
   const { name, sensorType, status, subAssets } = asset
   const isAsset = sensorType === null
 
-  const assetSelectedId = searchParams.get('assetSelectedId') ?? ''
-  const colorSelected = asset.id === assetSelectedId ? '#FFFFFF' : '#2188FF'
+  useEffect(() => {
+    if (isAlreadyOpen) {
+      setShowMenu(true)
+    }
+  }, [isAlreadyOpen])
 
   function handleShowMenu() {
-    setShowMenu(!showMenu)
+    setShowMenu((prevShowMenu) => !prevShowMenu)
   }
 
-  function handleSetAssetIdParam(id: string) {
-    setSearchParams((state) => {
-      state.set('assetSelectedId', id)
-
-      return state
-    })
-
+  function handleSetAssetIdParam() {
     onHandleAssetSelected(asset)
   }
+
+  const renderTree = useCallback(
+    (subAssets: Asset[]) => (
+      <div className="ml-4">
+        {subAssets.map((asset) => (
+          <TreeAsset
+            key={asset.id}
+            asset={asset}
+            isAlreadyOpen={isAlreadyOpen}
+          />
+        ))}
+      </div>
+    ),
+    [isAlreadyOpen],
+  )
 
   return (
     <div className="mt-1">
@@ -50,23 +61,16 @@ export function TreeAsset({ asset }: AssetProps) {
       ) : (
         <MenuItemSelected
           title={name}
-          isSelected={asset.id === assetSelectedId}
+          isSelected={asset.id === assetSelected.id}
           type={isAsset ? 'asset' : 'component'}
-          color={colorSelected}
           size={24}
           sensorType={sensorType}
           status={status}
-          handleSetAssetIdParam={() => handleSetAssetIdParam(asset.id)}
+          handleSetAssetIdParam={handleSetAssetIdParam}
         />
       )}
 
-      {showMenu && subAssets.length > 0 && (
-        <div className="ml-4">
-          {subAssets.map((asset) => (
-            <TreeAsset key={asset.id} asset={asset} />
-          ))}
-        </div>
-      )}
+      {showMenu && subAssets.length > 0 && renderTree(subAssets)}
     </div>
   )
 }
