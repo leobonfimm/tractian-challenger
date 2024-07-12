@@ -1,4 +1,6 @@
-interface ComponentIconProps {
+import { SVGProps } from 'react'
+
+interface ComponentIconProps extends SVGProps<SVGSVGElement> {
   color?: string
   size?: number
 }
@@ -6,6 +8,7 @@ interface ComponentIconProps {
 export function LocationIcon({
   color = '#2188FF',
   size = 22,
+  ...rest
 }: ComponentIconProps) {
   return (
     <svg
@@ -14,6 +17,7 @@ export function LocationIcon({
       viewBox="0 0 22 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...rest}
     >
       <path
         fillRule="evenodd"

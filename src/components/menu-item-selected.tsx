@@ -1,7 +1,7 @@
 import { Zap } from 'lucide-react'
 import { MenuIconType } from './menu-icon-type'
 
-interface MenuItemSelected {
+export interface MenuItemSelectedProps {
   title: string
   isSelected: boolean
   type: 'location' | 'asset' | 'component'
@@ -19,7 +19,7 @@ export function MenuItemSelected({
   sensorType,
   status,
   handleSetAssetIdParam,
-}: MenuItemSelected) {
+}: MenuItemSelectedProps) {
   const colorSelected = isSelected ? '#FFFFFF' : '#2188FF'
 
   return (
@@ -32,12 +32,14 @@ export function MenuItemSelected({
       <span>{title}</span>
       {sensorType === 'energy' && (
         <Zap
+          data-testid="zap-icon"
           data-alert={status === 'alert'}
           className="text-green-400 data-[alert=true]:text-red-500 w-4 h-4"
         />
       )}
       {sensorType === 'vibration' && (
         <div
+          data-testid="vibration-icon"
           data-alert={status === 'alert'}
           className="flex bg-green-400 data-[alert=true]:bg-red-500 w-2 h-2 rounded-full"
         />
