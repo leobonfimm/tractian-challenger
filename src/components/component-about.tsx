@@ -1,24 +1,28 @@
 import { useCompany } from '../context/company-provider'
 import { ComponentInputImage } from './component-input-image'
 
+import { useEffect, useState } from 'react'
 import componentEnergy from '../assets/component-energy.png'
 import componentVibration from '../assets/component-vibration.png'
 import { ComponentProps } from './component-props'
 
 export function ComponentAbout() {
   const { assetSelected } = useCompany()
-  let imageToRender = ''
+  const [imageToRender, setImageToRender] = useState('')
 
-  switch (assetSelected.sensorType) {
-    case 'energy':
-      imageToRender = componentEnergy
-      break
-    case 'vibration':
-      imageToRender = componentVibration
-      break
-    default:
-      break
-  }
+  useEffect(() => {
+    switch (assetSelected.sensorType) {
+      case 'energy':
+        setImageToRender(componentEnergy)
+        break
+      case 'vibration':
+        setImageToRender(componentVibration)
+        break
+      default:
+        setImageToRender('')
+        break
+    }
+  }, [assetSelected.sensorType])
 
   return (
     <div className="p-6 flex flex-col gap-6">

@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { ReactNode } from 'react'
 
-interface MenuButtonProps {
+export interface MenuButtonProps {
   isMenuOpen: boolean
   menuIcon: ReactNode
   title: string

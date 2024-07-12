@@ -1,22 +1,20 @@
 import { Location } from '../api/get-locations'
 
-export function filterTree(
-  locations: Location[],
-  query: string,
-  sensorType?: string,
-  status?: string,
-): Location[] {
-  if (!query && !sensorType && !status) return locations
+export function filterTree(locations: Location[], query: string): Location[] {
+  if (!query) return locations
 
-  console.log(sensorType)
-
-  query = query ? query.toLowerCase() : ''
+  query = query.toLowerCase()
 
   function search(location: Location): boolean {
     const locationName: string = location.name
       ? location.name.toLowerCase()
       : ''
     let match = locationName.includes(query)
+
+    const originalSubLocations = location.subLocations
+      ? [...location.subLocations]
+      : []
+    const originalAssets = location.assets ? [...location.assets] : []
 
     if (location.subLocations) {
       location.subLocations = location.subLocations.filter((child) =>
@@ -28,18 +26,20 @@ export function filterTree(
     if (location.assets) {
       location.assets = location.assets.filter((asset) => {
         const assetName = asset.name ? asset.name.toLowerCase() : ''
-        const matchesQuery = assetName.includes(query)
-        const matchesSensorType = sensorType
-          ? asset.sensorType === sensorType
-          : true
-        const matchesStatus = status ? asset.status === status : true
-        return matchesQuery && matchesSensorType && matchesStatus
+        return assetName.includes(query)
       })
       match = match || location.assets.length > 0
+    }
+
+    if (!match) {
+      location.subLocations = originalSubLocations
+      location.assets = originalAssets
     }
 
     return match
   }
 
-  return locations.filter((location) => search(location))
+  const result = locations.filter((location) => search(location))
+
+  return result
 }

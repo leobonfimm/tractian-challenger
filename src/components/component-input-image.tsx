@@ -1,8 +1,14 @@
 import { Inbox } from 'lucide-react'
 import { ChangeEvent, useState } from 'react'
 
-export function ComponentInputImage() {
-  const [imageUrl, setImageUrl] = useState('')
+interface ComponentInputImageProps {
+  imageToRender: string
+}
+
+export function ComponentInputImage({
+  imageToRender,
+}: ComponentInputImageProps) {
+  const [imageUrl, setImageUrl] = useState(imageToRender)
 
   function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files[0]) {
@@ -14,11 +20,11 @@ export function ComponentInputImage() {
   }
 
   return (
-    <div className="relative self-center">
+    <div className="relative">
       <label
         htmlFor="image"
-        data-state={!imageUrl}
-        className="absolute z-10 opacity-0 data-[state=true]:opacity-100 inset-0 flex items-center justify-center bg-blue-200 rounded-md border-[2px] border-dotted border-blue-500 cursor-pointer"
+        data-state={imageToRender.length > 0 ? imageToRender : false}
+        className="absolute z-10 opacity-0 data-[state=false]:opacity-100 inset-0 flex items-center justify-center bg-blue-200 rounded-md border-[2px] border-dotted border-blue-500 cursor-pointer"
       >
         <div className="flex flex-col items-center justify-center gap-1 text-blue-500">
           <Inbox size={42} />
@@ -33,9 +39,9 @@ export function ComponentInputImage() {
       </label>
 
       <img
-        src={imageUrl}
+        src={imageUrl.length > 0 ? imageUrl : imageToRender}
         alt=""
-        className="rounded-md w-[326px] h-[226px] object-contain"
+        className="rounded-md w-[326px] h-[226px] object-contain z-20"
       />
     </div>
   )

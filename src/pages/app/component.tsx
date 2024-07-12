@@ -13,12 +13,14 @@ export function ComponentDetails() {
         </h1>
         {assetSelected.sensorType === 'energy' && (
           <Zap
+            data-testid="zap-icon"
             data-alert={assetSelected.status === 'alert'}
             className="text-green-400 data-[alert=true]:text-red-500 w-4 h-4"
           />
         )}
         {assetSelected.sensorType === 'vibration' && (
           <div
+            data-testid="vibration-icon"
             data-alert={assetSelected.status === 'alert'}
             className="flex bg-green-400 data-[alert=true]:bg-red-500 w-2 h-2 rounded-full"
           />

@@ -1,4 +1,4 @@
-import { Search, Zap } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export interface SearchFilterFormSchema {
@@ -7,17 +7,11 @@ export interface SearchFilterFormSchema {
   status?: string
 }
 
-interface SearchFilterFormProps {
+export interface SearchFilterFormProps {
   onSearchFilter: (query: string) => void
-  onSensorTypeFilter: (type: string) => void
-  onStatusFilter: (status: string) => void
 }
 
-export function SearchFilterForm({
-  onSearchFilter,
-  onSensorTypeFilter,
-  onStatusFilter,
-}: SearchFilterFormProps) {
+export function SearchFilterForm({ onSearchFilter }: SearchFilterFormProps) {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState<string>(query)
 
@@ -49,27 +43,9 @@ export function SearchFilterForm({
         onChange={handleSearch}
       />
 
-      <div className="flex gap-2 ml-2">
-        <button type="button" className="cursor-pointer text-[#2188FF]">
-          <Search size={14} />
-        </button>
-
-        <button
-          type="button"
-          className="cursor-pointer text-[#2188FF]"
-          onClick={() => onSensorTypeFilter('energy')}
-        >
-          <Zap size={14} />
-        </button>
-
-        <button
-          type="button"
-          className="cursor-pointer"
-          onClick={() => onStatusFilter('alert')}
-        >
-          <div className="flex bg-red-500 w-3 h-3 rounded-full" />
-        </button>
-      </div>
+      <button type="button" className="cursor-pointer text-[#2188FF]">
+        <Search size={14} />
+      </button>
     </div>
   )
 }
