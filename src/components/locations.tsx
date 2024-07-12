@@ -17,7 +17,6 @@ export function Locations({ companyId }: ActiveNavigationProps) {
 
   useEffect(() => {
     getLocations(companyId).then((response) => setLocations(response))
-    console.log('called')
   }, [companyId])
 
   function handleSearchFilter(query: string) {

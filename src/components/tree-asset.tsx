@@ -18,8 +18,6 @@ export function TreeAsset({ asset, isAlreadyOpen }: AssetProps) {
   const { name, sensorType, status, subAssets } = asset
   const isAsset = sensorType === null
 
-  console.log(asset)
-
   useEffect(() => {
     if (isAlreadyOpen) {
       setShowMenu(true)

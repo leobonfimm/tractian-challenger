@@ -16,6 +16,7 @@ export function ComponentProps() {
               {assetSelected.sensorId}
             </span>
           </div>
+
           <div className="flex flex-1 flex-col gap-2">
             <strong>Receptor</strong>
             <span className="flex items-center text-[#88929c] gap-2">
